@@ -9,7 +9,10 @@ import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Range;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sun.istack.NotNull;
@@ -24,20 +27,20 @@ import com.sun.istack.NotNull;
 public class UserDetail {
 	@JsonProperty("id") @NotNull @Id
 	UUID id;
-	@JsonProperty("firstName") @NotNull
+	@JsonProperty("firstName") @NotNull  @Pattern(regexp="(^[a-zA-Z]*)")
 	 String firstName ; 
 	
-	@JsonProperty("middleName") @Size(min=4) @NotNull
+	@JsonProperty("middleName") @Basic(optional=true)   @Pattern(regexp="(^[a-zA-Z]*)")
 	String middleName ;
-	@JsonProperty("lastName") @NotNull
+	@JsonProperty("lastName") @NotNull @Pattern(regexp="(^[a-zA-Z]*)")
 	String lastName ;
-	@JsonProperty("age") @NotNull
+	@JsonProperty("age") @NotNull  @Range(min=1, max=99)
 	int age;
-	@JsonProperty("gender") @NotNull
-	char gender;
-	@JsonProperty("phone")
+	@JsonProperty("gender") @NotNull @Pattern(regexp="(^[M|F]{1}$)")
+	String gender;
+	@JsonProperty("phone") @Pattern(regexp="(^$|[0-9]{10})")
 	String phone;
-	@JsonProperty("zip") @Basic(optional=true)
+	@JsonProperty("zip") @Basic(optional=true)   @Pattern(regexp="(^[0-9]*)")
 	String zip;
 	
 		public UUID getId() {
@@ -70,10 +73,10 @@ public class UserDetail {
 	public void setAge(int age) {
 		this.age = age;
 	}
-	public char getGender() {
+	public String getGender() {
 		return gender;
 	}
-	public void setGender(char gender) {
+	public void setGender(String gender) {
 		this.gender = gender;
 	}
 	public String getPhone() {

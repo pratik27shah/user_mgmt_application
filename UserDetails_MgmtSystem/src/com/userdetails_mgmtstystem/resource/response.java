@@ -8,5 +8,5 @@ package com.userdetails_mgmtstystem.resource;
  *
  */
 public enum response 
-	{sucess,duplicate,error,invalid};
+	{sucess,duplicate,error,emptysession};
 

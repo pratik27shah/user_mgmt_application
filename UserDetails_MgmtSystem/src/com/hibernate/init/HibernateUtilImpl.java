@@ -4,20 +4,17 @@
 package com.hibernate.init;
 
 import java.util.List;
-
-import javax.transaction.Transactional;
+import java.util.UUID;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.stereotype.Component;
 
 import com.hibernate.dataobject.UserDetail;
 import com.userdetails_mgmtstystem.resource.response;
+
+
 
 
 
@@ -44,9 +41,12 @@ public class HibernateUtilImpl implements Hibernate  {
 
 	public  response storeuser(UserDetail userdetail) {
 
+		Session session=this.sessionfactory.openSession();
+		if(this.sessionfactory==null) return response.emptysession ;
+		session.beginTransaction();
 		try{
-			Session session=this.sessionfactory.openSession();
-			session.beginTransaction();
+
+
 			session.save(userdetail);
 			session.getTransaction().commit();
 			session.close();
@@ -54,20 +54,52 @@ public class HibernateUtilImpl implements Hibernate  {
 		}
 		catch(DataIntegrityViolationException ex)
 		{
+			session.getTransaction().rollback();
+			session.close();
 			return response.duplicate;
 
 		}
 		catch(Exception ex)
-		{	 return response.error ; 
+		{	session.getTransaction().rollback();
+		session.close();
+		return response.error ; 
 		}
 	}
 
 
 
 	public  List getallusers() {
+		if(this.sessionfactory==null) return null;
 		Session session=this.sessionfactory.openSession();
-		return session.createCriteria(UserDetail.class).list();
+		List<UserDetail> userlist= session.createCriteria(UserDetail.class).list();
+		session.close();
+		return userlist;
 	}
+
+
+	public response updateuser(UserDetail userdetail) {
+
+		if(this.sessionfactory==null) return response.emptysession ;
+		Session session=this.sessionfactory.openSession();
+		session.beginTransaction();
+		try{
+
+			session.delete(userdetail);
+			session.flush();		
+			session.save(userdetail);
+			session.getTransaction().commit();
+			session.close();
+			return response.sucess;
+		}
+
+		catch(Exception ex)
+		{	session.getTransaction().rollback();
+		session.close();
+		return response.error ; 
+		}
+	}
+
+
 
 
 
