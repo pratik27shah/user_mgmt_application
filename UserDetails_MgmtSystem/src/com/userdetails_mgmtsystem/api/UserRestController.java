@@ -6,6 +6,7 @@ package com.userdetails_mgmtsystem.api;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.Session;
@@ -46,21 +47,18 @@ public class UserRestController {
 	@RequestMapping(value="/createuser",method = {RequestMethod.POST},consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<String>  createuser(@RequestBody UserDetail userDetails,ModelMap model,HttpServletRequest request) {
 		response status = hibernate.storeuser(userDetails);
-		
+		String responsevalue;
 		if(status==response.sucess){
 			returnstatus=HttpStatus.CREATED;
-
+			responsevalue=status.toString();
 		}
 
-		else if(status==response.emptysession){
-			returnstatus=HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		else if(status==response.duplicate)
-			returnstatus=HttpStatus.ALREADY_REPORTED;
-		else
+		else{
 			returnstatus=HttpStatus.NOT_ACCEPTABLE;
+			responsevalue=hibernate.getMessage();
+		}
 
-		return new ResponseEntity<String>(status.toString(),returnstatus);
+		return new ResponseEntity<String>(responsevalue.toString(),returnstatus);
 
 	}
 
@@ -72,7 +70,6 @@ public class UserRestController {
 	@RequestMapping(value="/getalluser",method = {RequestMethod.GET},produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public  ResponseEntity<List<UserDetail>>  getalluser(ModelMap model,HttpServletRequest request) throws SQLException, ClassNotFoundException{
 		List<UserDetail> list= hibernate.getallusers();
-		
 		if(list.isEmpty())
 		{
 	returnstatus=HttpStatus.BAD_REQUEST;
@@ -92,20 +89,22 @@ public class UserRestController {
 	@RequestMapping(value="/updateuser",method = {RequestMethod.POST},consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<String>  updateuser(@RequestBody UserDetail userDetails,ModelMap model,HttpServletRequest request) {
 		response status = hibernate.updateuser(userDetails);
-		
+		String responsevalue;
 		if(status==response.sucess){
-			returnstatus=HttpStatus.CREATED;
+			returnstatus=HttpStatus.OK;
+			responsevalue=status.toString();
 
 		}
 
-		else if(status==response.emptysession){
-			returnstatus=HttpStatus.INTERNAL_SERVER_ERROR;
+		else if(status==response.notfound){
+			responsevalue=hibernate.getMessage();
+			returnstatus=HttpStatus.NOT_FOUND;
 		}
 		
-		else
-			returnstatus=HttpStatus.ALREADY_REPORTED;
-
-		return new ResponseEntity<String>(status.toString(),returnstatus);
+		else {	returnstatus=HttpStatus.NOT_ACCEPTABLE;
+		responsevalue=hibernate.getMessage();
+		}
+		return new ResponseEntity<String>(responsevalue,returnstatus);
 
 	}
 

@@ -8,10 +8,12 @@ import java.util.UUID;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import com.hibernate.dataobject.UserDetail;
+
 import com.userdetails_mgmtstystem.resource.response;
 
 
@@ -31,6 +33,15 @@ public class HibernateUtilImpl implements Hibernate  {
 	 */
 	@Autowired
 	private static  SessionFactory sessionfactory;
+	  String message;
+
+	public  String getMessage() {
+		return message;
+	}
+
+	public  void setMessage(String message) {
+		this.message = message;
+	}
 
 	HibernateUtilImpl(SessionFactory sessionfactory)
 	{
@@ -52,16 +63,11 @@ public class HibernateUtilImpl implements Hibernate  {
 			session.close();
 			return response.sucess;
 		}
-		catch(DataIntegrityViolationException ex)
-		{
-			session.getTransaction().rollback();
-			session.close();
-			return response.duplicate;
 
-		}
 		catch(Exception ex)
 		{	session.getTransaction().rollback();
 		session.close();
+		setMessage(ex.getLocalizedMessage());
 		return response.error ; 
 		}
 	}
@@ -84,6 +90,16 @@ public class HibernateUtilImpl implements Hibernate  {
 		session.beginTransaction();
 		try{
 
+			UserDetail userDetails=session.get(UserDetail.class, userdetail.getId());
+			if(userDetails==null) {
+				session.close();
+				setMessage("Data for "+userdetail.getId()+"Not found");
+				return response.notfound;}
+			else
+			{
+				session.clear();
+				
+			}
 			session.delete(userdetail);
 			session.flush();		
 			session.save(userdetail);
@@ -95,6 +111,7 @@ public class HibernateUtilImpl implements Hibernate  {
 		catch(Exception ex)
 		{	session.getTransaction().rollback();
 		session.close();
+		setMessage(ex.getLocalizedMessage());
 		return response.error ; 
 		}
 	}

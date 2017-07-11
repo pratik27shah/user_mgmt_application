@@ -17,7 +17,9 @@ import com.userdetails_mgmtstystem.resource.response;
  *
  */
 public interface Hibernate {
+	  String getMessage();
 	response storeuser(UserDetail userdetail);
 	List getallusers();
 	response updateuser(UserDetail userdetail);
+	void setMessage(String message);
 }

@@ -17,7 +17,7 @@
         <property name="connection.driver_class">org.hsqldb.jdbcDriver</property>
         
         <!-- jdbc:mysql://<host>:port/<database-name> -->
-        <property name="connection.url">jdbc:hsqldb:mem:aname</property>
+        <property name="connection.url">jdbc:hsqldb:mem:userdetail</property>
         <property name="connection.username">sa</property>
         <property name="connection.password"></property>
 
