@@ -67,6 +67,7 @@ public class HibernateUtilImpl implements Hibernate  {
 		catch(Exception ex)
 		{	session.getTransaction().rollback();
 		session.close();
+		
 		setMessage(ex.getLocalizedMessage());
 		return response.error ; 
 		}

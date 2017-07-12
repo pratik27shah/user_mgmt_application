@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.Range;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -27,20 +28,21 @@ import com.sun.istack.NotNull;
 public class UserDetail {
 	@JsonProperty("id") @NotNull @Id
 	UUID id;
-	@JsonProperty("firstName") @NotNull  @Pattern(regexp="(^[a-zA-Z]*)")
+	@JsonProperty("firstName") @NotBlank(message="FirstName must not be blank") @Pattern(regexp="(^[a-zA-Z]*)",message="FirstName must only have alphabets")
 	 String firstName ; 
 	
-	@JsonProperty("middleName") @Basic(optional=true)   @Pattern(regexp="(^[a-zA-Z]*)")
+	@JsonProperty("middleName") @Basic(optional=true)   @Pattern(regexp="(^[a-zA-Z]*)",message="middleName must only have alphabets")
 	String middleName ;
-	@JsonProperty("lastName") @NotNull @Pattern(regexp="(^[a-zA-Z]*)")
+	@JsonProperty("lastName") @NotBlank(message="lastName must not be blank") @Pattern(regexp="(^[a-zA-Z]*)",message="lastName must only have alphabets")
 	String lastName ;
-	@JsonProperty("age") @NotNull  @Range(min=1, max=99)
+	@JsonProperty("age") @NotNull  @Range(min=1, max=99,message=
+			"age must be between 1-99")
 	int age;
-	@JsonProperty("gender") @NotNull @Pattern(regexp="(^[M|F]{1}$)")
+	@JsonProperty("gender") @NotBlank(message="Gender must not be blank") @Pattern(regexp="(^[M|F]{1}$)",message="Gender must only ne M/F")
 	String gender;
-	@JsonProperty("phone") @Pattern(regexp="(^$|[0-9]{10})")
+	@JsonProperty("phone") @NotBlank(message="Phone number must not be blank") @Pattern(regexp="(^$|[0-9]{10})",message="Phone number must only have 10-digits")
 	String phone;
-	@JsonProperty("zip") @Basic(optional=true)   @Pattern(regexp="(^[0-9]*)")
+	@JsonProperty("zip") @Basic(optional=true)   @Pattern(regexp="(^[0-9]*)",message="zipcode  must only have digits")
 	String zip;
 	
 		public UUID getId() {
