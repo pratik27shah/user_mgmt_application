@@ -13,6 +13,6 @@ Hibernate(5.1)
 
 Maven
 
-postmates to test request/response of apis
+postman to test request/response of apis
 
 Junit
